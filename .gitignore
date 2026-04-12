@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.build/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+reports/test_report.json
+
+# Tool caches
+.mypy_cache/
+.ruff_cache/
+.isort_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Project data and artefacts
+data/processed/
+data/splits/
+models/
+mlruns/
+logs/
+reports/explainability/
+
+# Secrets
+.env

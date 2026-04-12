@@ -1,0 +1,34 @@
+services:
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri /mlruns --default-artifact-root /mlruns
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlruns:/mlruns
+
+  trainer:
+    build: .
+    command: python -m pipelines.train_pipeline
+    volumes:
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - mlruns:/app/mlruns
+    depends_on:
+      - mlflow
+
+  api:
+    build: .
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - mlruns:/app/mlruns
+    depends_on:
+      - trainer
+      - mlflow
+
+volumes:
+  mlruns:
