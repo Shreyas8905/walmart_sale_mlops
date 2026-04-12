@@ -17,6 +17,14 @@ class PredictionRequest(BaseModel):
 	CPI: float
 	Unemployment: float
 
+	@field_validator("Date")
+	@classmethod
+	def validate_date_format(cls, value: str) -> str:
+		from datetime import datetime
+
+		datetime.strptime(value, "%d-%m-%Y")
+		return value
+
 
 class PredictionResponse(BaseModel):
 	predicted_weekly_sales: float
