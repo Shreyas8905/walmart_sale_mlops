@@ -9,44 +9,46 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class PredictionRequest(BaseModel):
-	Store: int
-	Date: str
-	Holiday_Flag: int = Field(ge=0, le=1)
-	Temperature: float
-	Fuel_Price: float
-	CPI: float
-	Unemployment: float
+    Store: int
+    Date: str
+    Holiday_Flag: int = Field(ge=0, le=1)
+    Temperature: float
+    Fuel_Price: float
+    CPI: float
+    Unemployment: float
 
-	@field_validator("Date")
-	@classmethod
-	def validate_date_format(cls, value: str) -> str:
-		from datetime import datetime
+    @field_validator("Date")
+    @classmethod
+    def validate_date_format(cls, value: str) -> str:
+        from datetime import datetime
 
-		datetime.strptime(value, "%d-%m-%Y")
-		return value
+        datetime.strptime(value, "%d-%m-%Y")
+        return value
 
 
 class PredictionResponse(BaseModel):
-	predicted_weekly_sales: float
-	model_version: str
-	prediction_id: UUID
+    predicted_weekly_sales: float
+    model_version: str
+    prediction_id: UUID
 
 
 class BatchPredictionRequest(BaseModel):
-	records: list[PredictionRequest]
-	max_records: ClassVar[int] = 1000
+    records: list[PredictionRequest]
+    max_records: ClassVar[int] = 1000
 
-	@field_validator("records")
-	@classmethod
-	def validate_records(cls, records: list[PredictionRequest]) -> list[PredictionRequest]:
-		if not records:
-			raise ValueError("records must not be empty")
-		if len(records) > cls.max_records:
-			raise ValueError("records cannot exceed 1000 items")
-		return records
+    @field_validator("records")
+    @classmethod
+    def validate_records(
+        cls, records: list[PredictionRequest]
+    ) -> list[PredictionRequest]:
+        if not records:
+            raise ValueError("records must not be empty")
+        if len(records) > cls.max_records:
+            raise ValueError("records cannot exceed 1000 items")
+        return records
 
 
 class BatchPredictionResponse(BaseModel):
-	predictions: list[PredictionResponse]
-	total_records: int
-	processing_time_ms: float
+    predictions: list[PredictionResponse]
+    total_records: int
+    processing_time_ms: float
