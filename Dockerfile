@@ -11,7 +11,7 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 COPY src/ src/
 COPY configs/ configs/
-COPY models/ models/
+RUN mkdir -p models
 COPY .env.example .env
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
