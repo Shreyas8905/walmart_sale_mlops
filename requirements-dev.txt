@@ -7,3 +7,4 @@ mypy>=1.11
 shap>=0.46
 lime>=0.2.0.1
 httpx>=0.27
+types-PyYAML>=6.0.12.20250915
