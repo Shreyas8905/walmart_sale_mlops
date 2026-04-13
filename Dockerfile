@@ -2,6 +2,7 @@
 # Stage 1: builder — install deps
 FROM cgr.dev/chainguard/python:latest-dev AS builder
 WORKDIR /app
+ENV PATH="/home/nonroot/.local/bin:${PATH}"
 COPY requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
 
@@ -11,7 +12,6 @@ WORKDIR /app
 COPY --from=builder /home/nonroot/.local /home/nonroot/.local
 COPY src/ src/
 COPY configs/ configs/
-RUN mkdir -p models
 COPY .env.example .env
 ENV PATH="/home/nonroot/.local/bin:${PATH}" PYTHONUNBUFFERED=1
 EXPOSE 8000
