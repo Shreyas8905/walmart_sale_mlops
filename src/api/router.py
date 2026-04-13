@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from time import perf_counter
 from uuid import uuid4
+from typing import Any
 
 import pandas as pd
 from fastapi import APIRouter, Request
 
 from ..data.preprocessor import engineer_features
 from ..logger import get_logger
-from ..models.trainer import ModelBundle
 from .schemas import (
     BatchPredictionRequest,
     BatchPredictionResponse,
@@ -32,18 +32,22 @@ def _baseline_score(payload: PredictionRequest) -> float:
     )
 
 
-def _get_bundle(request: Request) -> ModelBundle:
+def _get_bundle(request: Request) -> Any:
     bundle = getattr(request.app.state, "model_bundle", None)
     if bundle is None:
-        return ModelBundle(
-            model=None,
-            preprocessing_pipeline=None,
-            metadata={"model_name": "baseline", "version": "0.0.0"},
-        )
+        return type(
+            "Bundle",
+            (),
+            {
+                "model": None,
+                "preprocessing_pipeline": None,
+                "metadata": {"model_name": "baseline", "version": "0.0.0"},
+            },
+        )()
     return bundle
 
 
-def _predict_single(payload: PredictionRequest, bundle: ModelBundle) -> float:
+def _predict_single(payload: PredictionRequest, bundle: Any) -> float:
     if bundle.model is None or bundle.preprocessing_pipeline is None:
         return float(_baseline_score(payload))
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from time import perf_counter
 from uuid import uuid4
+from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,7 +13,6 @@ from fastapi.responses import JSONResponse
 
 from ..config import get_settings
 from ..logger import configure_logging, get_logger
-from ..models.trainer import load_model_bundle
 from .router import router
 
 LOGGER = get_logger(__name__)
@@ -23,7 +23,12 @@ async def lifespan(app: FastAPI):
     configure_logging()
     settings = get_settings()
     app.state.settings = settings
-    app.state.model_bundle = load_model_bundle(settings)
+    try:
+        from ..models.trainer import load_model_bundle
+
+        app.state.model_bundle = load_model_bundle(settings)
+    except ModuleNotFoundError:
+        app.state.model_bundle = None
     yield
 
 
