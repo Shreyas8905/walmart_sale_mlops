@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from time import perf_counter
-from uuid import uuid4
 from typing import Any
+from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware

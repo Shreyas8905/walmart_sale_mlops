@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from time import perf_counter
-from uuid import uuid4
 from typing import Any
+from uuid import uuid4
 
 import pandas as pd
 from fastapi import APIRouter, Request
