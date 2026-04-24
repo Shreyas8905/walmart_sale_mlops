@@ -296,6 +296,15 @@ Open dashboard:
 
 1. `http://localhost:5000`
 
+Run comparison workflow:
+
+1. Open the experiment `walmart-weekly-sales`.
+2. In `Runs`, use table columns for params and metrics such as `alpha`, `learning_rate`, `max_depth`, `val_rmse`, `val_mae`, `val_r2`, and `test_rmse`.
+3. Filter out summary rows by adding a filter on tag `run_type != summary`.
+4. Select multiple trial runs and click `Compare` to view parallel coordinates and scatter-based metric comparisons.
+5. To inspect only one training execution batch, filter by tag `trial_group`.
+6. The best model trial is marked with tag `is_champion=true` and includes `test_*` metrics.
+
 ## Docker Quick Start
 
 Build and run all services:

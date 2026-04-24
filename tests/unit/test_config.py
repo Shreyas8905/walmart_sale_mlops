@@ -16,3 +16,5 @@ def test_settings_loads_and_paths_are_path_objects():
     assert isinstance(settings.paths.data_splits, Path)
     assert isinstance(settings.paths.models, Path)
     assert isinstance(settings.paths.reports, Path)
+    assert isinstance(settings.mlflow.tracking_uri, str)
+    assert settings.mlflow.tracking_uri.startswith(("file:", "http:", "https:"))

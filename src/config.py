@@ -5,6 +5,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Literal
+from urllib.parse import urlparse
 
 import yaml
 from pydantic import BaseModel, Field
@@ -31,7 +32,7 @@ class PathsConfig(BaseModel):
 
 
 class MLflowConfig(BaseModel):
-    tracking_uri: Path
+    tracking_uri: str
     experiment_name: str
 
 
@@ -87,6 +88,34 @@ def _load_yaml_config() -> dict[str, Any]:
         return yaml.safe_load(file_handle) or {}
 
 
+def _resolve_mlflow_tracking_uri(uri_value: str | Path) -> str:
+    raw_uri = str(uri_value).strip()
+    if not raw_uri:
+        raw_uri = "mlruns"
+
+    # Windows drive paths like D:\mlruns should be treated as local file paths,
+    # not as URI schemes.
+    if len(raw_uri) >= 2 and raw_uri[1] == ":" and raw_uri[0].isalpha():
+        return _ensure_path(raw_uri).as_uri()
+
+    parsed = urlparse(raw_uri)
+    if parsed.scheme in {
+        "file",
+        "http",
+        "https",
+        "databricks",
+        "databricks-uc",
+        "uc",
+        "postgresql",
+        "mysql",
+        "sqlite",
+        "mssql",
+    }:
+        return raw_uri
+
+    return _ensure_path(raw_uri).as_uri()
+
+
 def load_config() -> AppConfig:
     """Load the YAML and environment configuration into a typed object."""
 
@@ -106,7 +135,7 @@ def load_config() -> AppConfig:
         reports=_ensure_path(paths_section.get("reports", "reports/explainability")),
     )
 
-    mlflow_tracking_uri = _ensure_path(
+    mlflow_tracking_uri = _resolve_mlflow_tracking_uri(
         env_settings.mlflow_tracking_uri or mlflow_section.get("tracking_uri", "mlruns")
     )
     _ensure_path(PROJECT_ROOT / "logs")

@@ -4,6 +4,9 @@ install:
 train:
 	python -m pipelines.train_pipeline
 
+mlflow-ui:
+	mlflow ui --backend-store-uri mlruns --host 0.0.0.0 --port 5000
+
 explain:
 	python -m pipelines.explain_pipeline
 
