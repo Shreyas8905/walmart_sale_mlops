@@ -41,6 +41,7 @@ data/splits/
 models/
 mlruns/
 logs/
+reports/explainability/
 
 # Secrets
 .env
