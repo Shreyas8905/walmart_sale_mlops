@@ -139,7 +139,9 @@ def _log_evaluation_table(rows: list[dict[str, Any]], artifact_file: str) -> Non
         return
 
     # Backward-compatible fallback for older MLflow versions.
-    with tempfile.NamedTemporaryFile(suffix=".json", delete=False, mode="w", encoding="utf-8") as temp_file:
+    with tempfile.NamedTemporaryFile(
+        suffix=".json", delete=False, mode="w", encoding="utf-8"
+    ) as temp_file:
         json.dump(rows, temp_file, indent=2, default=str)
         temp_table_path = Path(temp_file.name)
     _log_artifact(temp_table_path, artifact_path=str(Path(artifact_file).parent))
@@ -181,7 +183,9 @@ def train_models(
     trial_group = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
     for model_spec in model_registry:
-        for index, parameters in enumerate(_iter_param_combinations(model_spec.param_grid)):
+        for index, parameters in enumerate(
+            _iter_param_combinations(model_spec.param_grid)
+        ):
             model = _instantiate_model(
                 model_spec.estimator_cls,
                 parameters,
@@ -221,7 +225,10 @@ def train_models(
 
                 if mlflow is not None:
                     mlflow.log_metrics(
-                        {f"val_{metric_name}": metric_value for metric_name, metric_value in metrics.items()}
+                        {
+                            f"val_{metric_name}": metric_value
+                            for metric_name, metric_value in metrics.items()
+                        }
                     )
                     _log_evaluation_table(
                         [
@@ -234,7 +241,9 @@ def train_models(
                         ],
                         artifact_file="tables/evaluation.json",
                     )
-                    with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as temp_file:
+                    with tempfile.NamedTemporaryFile(
+                        suffix=".pkl", delete=False
+                    ) as temp_file:
                         pickle.dump(model, temp_file)
                         temp_model_path = Path(temp_file.name)
                     _log_artifact(temp_model_path, artifact_path="models")
@@ -297,13 +306,17 @@ def train_models(
                     f"test_{metric_name}",
                     metric_value,
                 )
-            client.log_artifact(champion_run_id, str(model_path), artifact_path="models")
+            client.log_artifact(
+                champion_run_id, str(model_path), artifact_path="models"
+            )
             client.log_artifact(
                 champion_run_id,
                 str(preprocessing_path),
                 artifact_path="models",
             )
-            client.log_artifact(champion_run_id, str(summary_path), artifact_path="reports")
+            client.log_artifact(
+                champion_run_id, str(summary_path), artifact_path="reports"
+            )
 
         with _mlflow_start_run(run_name=f"training_summary_{trial_group}"):
             mlflow.set_tags(
