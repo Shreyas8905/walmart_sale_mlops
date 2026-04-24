@@ -38,7 +38,6 @@ Thumbs.db
 # Project data and artefacts
 data/processed/
 data/splits/
-models/
 mlruns/
 logs/
 reports/explainability/
